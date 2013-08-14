@@ -1,0 +1,6 @@
+.jquery-placecomplete-google-attribution {
+	padding-bottom: 15px;
+	background-image: url("./powered-by-google.png") !important;
+	background-repeat: no-repeat !important;
+	background-position: right bottom !important;
+}

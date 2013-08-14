@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>jQuery Placecomplete</title>
+		<!-- jQuery is a dependency -->
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+		<!-- Select2 is a dependency -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.js"></script>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.css">
+
+		<!-- Google Maps Places API is a dependency -->
+		<script type="text/javascript"
+          src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
+
+		<!-- jQuery Placecomplete plugin -->
+		<script src="jquery.placecomplete.js"></script>
+		<link rel="stylesheet" href="jquery.placecomplete.css">
+
+		<style>
+			body {
+				font-family: "Helvetica Neue";
+				background: #f0f0f0;
+				margin: 0;
+				padding: 0;
+			}
+
+			.container {
+				width: 800px;
+				margin: 0 auto;
+				padding: 50px;
+				background: #fff;
+			}
+
+			#location-picker {
+				width: 400px;
+			}
+
+			#feedback {
+				font-size: 16px;
+				margin-top: 50px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>jQuery Placecomplete Plugin</h1>
+			<label>
+				Location:
+			</label>
+			<input type="text" id="location-picker"/>
+			<div id="feedback"></div>
+		</div>
+		<script>
+			$(function() {
+				var $el = $("#location-picker");
+				$el.placecomplete({
+					width: "element"
+				});
+
+				var $feedbackEl = $("#feedback");
+
+				$el.on({
+					"placecomplete:selected": function(evt, placeResult) {
+						$feedbackEl.text(JSON.stringify(placeResult));
+					},
+					"placecomplete:cleared": function(evt) {
+						$feedbackEl.text("Input cleared!");
+					},
+					"placecomplete:error": function(evt, errorMsg) {
+						$feedbackEl.text("Error: " + errorMsg);
+					}
+				})
+			});
+		</script>
+
+	</body>
+</html>
