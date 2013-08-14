@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Placecomplete : A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Placecomplete</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/stchangg/placecomplete">View on GitHub</a>
+
+          <h1 id="project_title">Placecomplete</h1>
+          <h2 id="project_tagline">A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/stchangg/placecomplete/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/stchangg/placecomplete/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="placecomplete" class="anchor" href="#placecomplete"><span class="octicon octicon-link"></span></a>Placecomplete</h1>
+
+<p>A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API</p>
+
+<h2>
+<a name="justificationuse-cases" class="anchor" href="#justificationuse-cases"><span class="octicon octicon-link"></span></a>Justification/Use Cases</h2>
+
+<p>(TODO: summarize how existing solutions aren't adequate.)</p>
+
+<h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>Make sure to load the following libraries (and associated stylesheets and assets) before using Placecomplete:</p>
+
+<ol>
+<li><a href="http://jquery.com/">jQuery</a></li>
+<li><a href="http://ivaynberg.github.io/select2/">Select2</a></li>
+<li><a href="https://developers.google.com/places/documentation/autocomplete">Google Maps Places API</a></li>
+</ol><p>The following code is sufficient for including the Google Maps API:</p>
+
+<pre><code>&lt;script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;amp;sensor=false"&gt;&lt;/script&gt;
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a name="html" class="anchor" href="#html"><span class="octicon octicon-link"></span></a>HTML</h3>
+
+<pre><code>&lt;input id="location-picker" type="text" /&gt;
+</code></pre>
+
+<h3>
+<a name="javascript" class="anchor" href="#javascript"><span class="octicon octicon-link"></span></a>Javascript</h3>
+
+<h4>
+<a name="simple-configuration-and-default-values" class="anchor" href="#simple-configuration-and-default-values"><span class="octicon octicon-link"></span></a>Simple configuration and default values</h4>
+
+<pre><code>$("#location-picker").placecomplete({});
+</code></pre>
+
+<p>is equivalent to this:</p>
+
+<pre><code>$("#location-picker").placecomplete({
+    placeholderText: "City, State, Country",
+    requestParams: {
+        types: ["(cities)"]
+    }
+});
+</code></pre>
+
+<p>See the next section for more details on the format of <code>requestParams</code>.</p>
+
+<h4>
+<a name="different-request-parameters-for-the-google-places-api-call" class="anchor" href="#different-request-parameters-for-the-google-places-api-call"><span class="octicon octicon-link"></span></a>Different request parameters for the Google Places API call</h4>
+
+<p>The <code>requestParams</code> object takes the format of the <a href="https://developers.google.com/maps/documentation/javascript/reference#AutocompletionRequest">Google Maps API AutocompletionRequest object</a>.</p>
+
+<p>Note that <code>input</code> will always be set by the plugin to the user's text input.</p>
+
+<pre><code>$("#location-picker").placecomplete({
+    placeholderText: "Business name",
+    requestParams: {
+        types: ["establishment"]
+    }
+);
+</code></pre>
+
+<h4>
+<a name="select2-options" class="anchor" href="#select2-options"><span class="octicon octicon-link"></span></a>Select2 options</h4>
+
+<p>Because Placecomplete instantiates Select2 on your element, you can supply <a href="http://ivaynberg.github.io/select2/#documentation">Select2 options</a> directly:</p>
+
+<pre><code>$("#location-picker").placecomplete({
+    width: "element",
+    placeholderText: "Enter your location here"
+});
+</code></pre>
+
+<h2>
+<a name="api" class="anchor" href="#api"><span class="octicon octicon-link"></span></a>API</h2>
+
+<p>Placecomplete triggers three events:</p>
+
+<h3>
+<a name="placecompleteselected" class="anchor" href="#placecompleteselected"><span class="octicon octicon-link"></span></a><code>placecomplete:selected</code>
+</h3>
+
+<p>When the user selects an item from the autocomplete.</p>
+
+<p>The <code>placeResult</code> object takes the format of the <a href="https://developers.google.com/maps/documentation/javascript/reference#PlaceResult">Google Maps API PlaceResult object</a> with one small exception.</p>
+
+<p>It has an additional property, <code>display_text</code> (arbitrarily chosen by me), which is set to the text that appeared in the autocomplete dropdown list. This is necessary because for some place results, the <code>formatted_address</code> field does not always match the text that was shown in the autocomplete. It appears to be a weird Google Places API quirk/bug.</p>
+
+<pre><code>$el.on({
+    "placecomplete:selected": function(evt, placeResult) {
+        $feedbackEl.text(JSON.stringify(placeResult));
+    }
+});
+</code></pre>
+
+<h3>
+<a name="placecompletecleared" class="anchor" href="#placecompletecleared"><span class="octicon octicon-link"></span></a><code>placecomplete:cleared</code>
+</h3>
+
+<p>When the user clears the input via the clear button</p>
+
+<pre><code>$el.on({
+    "placecomplete:cleared": function(evt) {
+        $feedbackEl.text("Input cleared!");
+    }
+});
+</code></pre>
+
+<h3>
+<a name="placecompleteerror" class="anchor" href="#placecompleteerror"><span class="octicon octicon-link"></span></a><code>placecomplete:error</code>
+</h3>
+
+<p>When the Google Maps API returns an error</p>
+
+<pre><code>$el.on({
+    "placecomplete:error": function(evt, errorMsg) {
+        $feedbackEl.text("Error: " + errorMsg);
+    }
+})
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Placecomplete maintained by <a href="https://github.com/stchangg">stchangg</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
