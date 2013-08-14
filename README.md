@@ -69,7 +69,11 @@ Because Placecomplete instantiates Select2 on your element, you can supply [Sele
 Placecomplete triggers three events:
 
 ### `placecomplete:selected`
-When the user selects an item from the autocomplete
+When the user selects an item from the autocomplete.
+
+The `placeResult` object takes the format of the [Google Maps API PlaceResult object](https://developers.google.com/maps/documentation/javascript/reference#PlaceResult) with one small exception.
+
+It has an additional property, `display_text` (arbitrarily chosen by me), which is set to the text that appeared in the autocomplete dropdown list. This is necessary because for some place results, the `formatted_address` field does not always match the text that was shown in the autocomplete. It appears to be a weird Google Places API quirk/bug.
 
 	$el.on({
 		"placecomplete:selected": function(evt, placeResult) {
