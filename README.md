@@ -1,4 +1,4 @@
-# Placecomplete: A jQuery plugin for location autocomplete
+# Placecomplete: A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API
 
 ## Justification/Use Cases
 
