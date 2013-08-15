@@ -28,8 +28,8 @@ Make sure to load the following libraries (and associated stylesheets and assets
 The following code is sufficient for including the Google Maps API:
 
 ```html
-    <script type="text/javascript"
-          src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
+<script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
 ```
 
 ## Usage
@@ -45,22 +45,22 @@ The `powered-by-google.png` image is needed for [proper attribution to Google fo
 For example:
 
 ```html
-    <html>
-    <head>
-        <script src="jquery.placecomplete.js"></script>
-        <link rel="stylesheet" href="jquery.placecomplete.css">
-    </head>
-    <body>
-        <input id="location-picker" type="text" />
+<html>
+<head>
+    <script src="jquery.placecomplete.js"></script>
+    <link rel="stylesheet" href="jquery.placecomplete.css">
+</head>
+<body>
+    <input id="location-picker" type="text" />
 
-        <script>
-            $(function() {
-                var $el = $("#location-picker");
-                $el.placecomplete({});
-            });
-        </script>
-    </body>
-    </html>
+    <script>
+        $(function() {
+            var $el = $("#location-picker");
+            $el.placecomplete({});
+        });
+    </script>
+</body>
+</html>
 ```
 
 ## Configuration
@@ -68,18 +68,18 @@ For example:
 ### Simple configuration and default values
 
 ```javascript
-    $el.placecomplete({});
+$el.placecomplete({});
 ```
 
 is equivalent to this:
 
 ```javascript
-    $el.placecomplete({
-        placeholderText: "City, State, Country",
-        requestParams: {
-            types: ["(cities)"]
-        }
-    });
+$el.placecomplete({
+    placeholderText: "City, State, Country",
+    requestParams: {
+        types: ["(cities)"]
+    }
+});
 ```
 
 See the next section for more details on the format of `requestParams`.
@@ -91,12 +91,12 @@ The `requestParams` object takes the format of the [Google Maps API Autocompleti
 Note that `input` will always be set by the plugin to the user's text input.
 
 ```javascript
-    $el.placecomplete({
-        placeholderText: "Business name",
-        requestParams: {
-            types: ["establishment"]
-        }
-    );
+$el.placecomplete({
+    placeholderText: "Business name",
+    requestParams: {
+        types: ["establishment"]
+    }
+);
 ```
 
 ### Select2 options
@@ -104,10 +104,10 @@ Note that `input` will always be set by the plugin to the user's text input.
 Because Placecomplete instantiates Select2 on your element, you can supply [Select2 options](http://ivaynberg.github.io/select2/#documentation) directly:
 
 ```javascript
-    $el.placecomplete({
-        width: "element",
-        placeholderText: "Enter your location here"
-    });
+$el.placecomplete({
+    width: "element",
+    placeholderText: "Enter your location here"
+});
 ```
 
 ## Events
@@ -122,36 +122,36 @@ The `placeResult` object takes the format of the [Google Maps API PlaceResult ob
 It has an additional property, `display_text` (arbitrarily chosen by me), which is set to the text that appeared in the autocomplete dropdown list. This is necessary because for some place results, the `formatted_address` field does not always match the text that was shown in the autocomplete. It appears to be a weird Google Places API quirk/bug.
 
 ```javascript
-    $el.on({
-        "placecomplete:selected": function(evt, placeResult) {
-            console.log(placeResult);
-        }
-    });
+$el.on({
+    "placecomplete:selected": function(evt, placeResult) {
+        console.log(placeResult);
+    }
+});
 ```
 
 ### `placecomplete:cleared`
 When the user clears the input via the clear button
 
 ```javascript
-    $el.on({
-        "placecomplete:cleared": function(evt) {
-            console.log("Input cleared!");
-        }
-    });
+$el.on({
+    "placecomplete:cleared": function(evt) {
+        console.log("Input cleared!");
+    }
+});
 ```
 
 ### `placecomplete:error`
 When the Google Maps API returns an error. The error message returned is a string equal to one of the [`google.maps.places.PlacesServiceStatus` constants](https://developers.google.com/maps/documentation/javascript/reference#PlacesServiceStatus).
 
 ```javascript
-    $el.on({
-        "placecomplete:error": function(evt, errorMsg) {
-            if (errorMsg ===
-                google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {
-                // do something
-            }
+$el.on({
+    "placecomplete:error": function(evt, errorMsg) {
+        if (errorMsg ===
+            google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {
+            // do something
         }
-    });
+    }
+});
 ```
 
 ## Background
