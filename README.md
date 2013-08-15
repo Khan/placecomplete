@@ -34,11 +34,11 @@ The following code is sufficient for including the Google Maps API:
 
 Clone the repo and add the following files to your project:
 
-- jquery.placecomplete.js
-- jquery.placecomplete.css
-- powered-by-google.png*
+- `jquery.placecomplete.js`
+- `jquery.placecomplete.css`
+- `powered-by-google.png`
 
-* Needed for [proper attribution to Google for usage of their Places API](https://developers.google.com/places/policies). Must be located in the same directory as the css file.
+The `powered-by-google.png` image is needed for [proper attribution to Google for usage of their Places API](https://developers.google.com/places/policies). It must be located in the same directory as the css file.
 
 For example:
 
