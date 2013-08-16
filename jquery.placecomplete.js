@@ -66,7 +66,7 @@ var GooglePlacesAPI = function(el) {
         // Get details of the selected item
         getDetails: function(abbreviatedPlaceResult) {
             var deferred = new $.Deferred();
-            var displayText = abbreviatedPlaceResult.text;
+            var displayText = abbreviatedPlaceResult.description;
             pService.getDetails(
                 {reference: abbreviatedPlaceResult.reference},
                 $.proxy(handleDetails, this, deferred, displayText));
@@ -79,6 +79,7 @@ var pluginName = "placecomplete",
     GPAPI,
     defaults = {
         placeholderText: "City, State, Country",
+        initText: "",
         // Request parameters for the .getPlacePredictions() call
         // See https://developers.google.com/maps/
         // documentation/javascript/reference#AutocompletionRequest
@@ -105,14 +106,24 @@ function Plugin(element, options) {
 
 Plugin.prototype.init = function() {
     var $el = $(this.element);
+
     var requestParams = this.options.requestParams;
+    var initText = this.options.initText;
+
+    // If an initText value is supplied, set the `value` property on the
+    // input HTML element to trigger select2 to call initSelection()
+    if (initText.length > 0) {
+        $el.val(initText);
+    }
 
     var select2options = $.extend({}, {
         query: function(query) {
             $.when(GPAPI.getPredictions(query.term, requestParams))
              .then(function(aprs) {
                     var results = $.map(aprs, function(apr) {
-                        apr["id"] = apr["reference"];
+                        // Select2 needs a "text" and "id" property set for
+                        // each autocomplete list item. "id" is already
+                        // defined on the apr object
                         apr["text"] = apr["description"];
                         return apr;
                     });
@@ -121,6 +132,16 @@ Plugin.prototype.init = function() {
                     $el.trigger(pluginName + ":error", errorMsg);
                     query.callback({results: []});
              });
+        },
+        initSelection: function(element, callback) {
+            // initSelection() was triggered by value being defined directly
+            // in the input element HTML
+            if (!initText) {
+                var initText = $el.val();
+            }
+            // The id doesn't matter here since we're just trying to prefill
+            // the input with text for the user to see.
+            callback({id: 0, text: initText});
         },
         minimumInputLength: 1,
         selectOnBlur: true,

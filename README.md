@@ -110,6 +110,19 @@ $el.placecomplete({
 });
 ```
 
+### Other options
+
+#### `initText`
+
+You can supply a `initText` string to bootstrap the "selected item" text when the element is rendered. For example, if you are using Placecomplete on a user settings page and the user has previously set and saved their location, you probably want to show this saved location back to the user when the user visits the settings page and/or refreshes the page.
+
+```javascript
+var savedUserLocation = "Mountain View, CA";
+$el.placecomplete({
+    initText: savedUserLocation
+});
+```
+
 ## Events
 
 Placecomplete triggers three events:
