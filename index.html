@@ -47,15 +47,14 @@
             <label>
                 Location:
             </label>
-            <input type="text" id="location-picker"/>
+            <input type="text" id="location-picker" value="Mountain View, CA"/>
             <div id="feedback"></div>
         </div>
         <script>
             $(function() {
                 var $el = $("#location-picker");
                 $el.placecomplete({
-                    width: "element",
-                    initText: "Mountain View, CA"
+                    width: "element"
                 });
 
                 var $feedbackEl = $("#feedback");

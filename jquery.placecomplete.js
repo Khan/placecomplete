@@ -79,7 +79,6 @@ var pluginName = "placecomplete",
     GPAPI,
     defaults = {
         placeholderText: "City, State, Country",
-        initText: "",
         // Request parameters for the .getPlacePredictions() call
         // See https://developers.google.com/maps/
         // documentation/javascript/reference#AutocompletionRequest
@@ -108,13 +107,6 @@ Plugin.prototype.init = function() {
     var $el = $(this.element);
 
     var requestParams = this.options.requestParams;
-    var initText = this.options.initText;
-
-    // If an initText value is supplied, set the `value` property on the
-    // input HTML element to trigger select2 to call initSelection()
-    if (initText.length > 0) {
-        $el.val(initText);
-    }
 
     var select2options = $.extend({}, {
         query: function(query) {
@@ -136,9 +128,8 @@ Plugin.prototype.init = function() {
         initSelection: function(element, callback) {
             // initSelection() was triggered by value being defined directly
             // in the input element HTML
-            if (!initText) {
-                var initText = $el.val();
-            }
+            var initText = $el.val();
+
             // The id doesn't matter here since we're just trying to prefill
             // the input with text for the user to see.
             callback({id: 0, text: initText});
