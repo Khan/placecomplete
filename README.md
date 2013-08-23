@@ -1,7 +1,7 @@
 Placecomplete
 =============
 
-A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API
+A Select2/jQuery plugin for location autocomplete powered by the Google Maps API
 
 [Try the demo here.](https://rawgithub.com/stchangg/placecomplete/master/example.html)
 
@@ -31,7 +31,7 @@ The following code is sufficient for including the Google Maps API:
 
 ```html
 <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
+    src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
 ```
 
 ## Usage
@@ -40,25 +40,29 @@ Clone the repo and add the following files to your project:
 
 - `jquery.placecomplete.js`
 - `jquery.placecomplete.css`
-- `powered-by-google.png`
-
-The `powered-by-google.png` image is needed for [proper attribution to Google for usage of their Places API](https://developers.google.com/places/policies). It must be located in the same directory as the css file.
 
 For example:
 
 ```html
 <html>
 <head>
+    <!-- jQuery, Select2, Google Maps Places API -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.css">
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
+
+    <!-- Placecomplete plugin -->
     <script src="jquery.placecomplete.js"></script>
     <link rel="stylesheet" href="jquery.placecomplete.css">
 </head>
 <body>
-    <input id="location-picker" type="text" />
+    <input id="example" type="text" />
 
     <script>
         $(function() {
-            var $el = $("#location-picker");
-            $el.placecomplete({});
+            $("#example").placecomplete({});
         });
     </script>
 </body>
@@ -70,13 +74,13 @@ For example:
 ### Simple configuration and default values
 
 ```javascript
-$el.placecomplete({});
+$("#example").placecomplete({});
 ```
 
 is equivalent to this:
 
 ```javascript
-$el.placecomplete({
+$("#example").placecomplete({
     placeholderText: "City, State, Country",
     requestParams: {
         types: ["(cities)"]
@@ -93,7 +97,7 @@ The `requestParams` object takes the format of the [Google Maps API Autocompleti
 Note that `input` will always be set by the plugin to the user's text input.
 
 ```javascript
-$el.placecomplete({
+$("#example").placecomplete({
     placeholderText: "Business name",
     requestParams: {
         types: ["establishment"]
@@ -106,7 +110,7 @@ $el.placecomplete({
 Because Placecomplete instantiates Select2 on your element, you can supply [Select2 options](http://ivaynberg.github.io/select2/#documentation) directly:
 
 ```javascript
-$el.placecomplete({
+$("#example").placecomplete({
     width: "element",
     placeholderText: "Enter your location here"
 });
@@ -119,7 +123,7 @@ $el.placecomplete({
 You can supply a default input value to bootstrap the "selected item" text when the element is rendered. For example, if you are using Placecomplete on a user settings page and the user has previously set and saved their location, you probably want to show this saved location back to the user when the user visits the settings page and/or refreshes the page.
 
 ```html
-<input type="text" value="Mountain View, CA"/>
+<input type="text" value="Mountain View, CA" />
 ```
 
 ## Events
@@ -134,7 +138,7 @@ The `placeResult` object takes the format of the [Google Maps API PlaceResult ob
 It has an additional property, `display_text` (arbitrarily chosen by me), which is set to the text that appeared in the autocomplete dropdown list. This is necessary because for some place results, the `formatted_address` field does not always match the text that was shown in the autocomplete. It appears to be a weird Google Places API quirk/bug.
 
 ```javascript
-$el.on({
+$("#example").on({
     "placecomplete:selected": function(evt, placeResult) {
         console.log(placeResult);
     }
@@ -145,7 +149,7 @@ $el.on({
 When the user clears the input via the clear button
 
 ```javascript
-$el.on({
+$("#example").on({
     "placecomplete:cleared": function(evt) {
         console.log("Input cleared!");
     }
@@ -156,7 +160,7 @@ $el.on({
 When the Google Maps API returns an error. The error message returned is a string equal to one of the [`google.maps.places.PlacesServiceStatus` constants](https://developers.google.com/maps/documentation/javascript/reference#PlacesServiceStatus).
 
 ```javascript
-$el.on({
+$("#example").on({
     "placecomplete:error": function(evt, errorMsg) {
         if (errorMsg ===
             google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {

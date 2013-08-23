@@ -53,17 +53,17 @@
             <label>
                 Location:
             </label>
-            <input type="text" id="location-picker" value="Mountain View, CA"/>
+            <input type="text" id="example" value="Mountain View, CA"/>
             <div id="feedback"></div>
         </div>
         <script>
             $(function() {
-                var $el = $("#location-picker");
+                var $el = $("#example"),
+                    $feedbackEl = $("#feedback");
+
                 $el.placecomplete({
                     width: "element"
                 });
-
-                var $feedbackEl = $("#feedback");
 
                 $el.on({
                     "placecomplete:selected": function(evt, placeResult) {
