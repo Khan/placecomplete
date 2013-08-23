@@ -5,27 +5,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="@stchangg (Stephanie H. Chang)">
-        <title>Placecomplete: A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API</title>
+        <title>Placecomplete: A Select2/jQuery plugin for location autocomplete powered by the Google Maps API</title>
 
-        <!-- jQuery is a dependency -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
-        <!-- Select2 is a dependency -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.js"></script>
+        <!-- jQuery, Select2, Google Maps Places API -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.css">
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
 
-        <!-- Google Maps Places API is a dependency -->
-        <script type="text/javascript"
-          src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
-
-        <!-- jQuery Placecomplete plugin -->
+        <!-- Placecomplete plugin -->
         <script src="jquery.placecomplete.js"></script>
         <link rel="stylesheet" href="jquery.placecomplete.css">
+
+        <!-- The following are not necessary for using Placecomplete -->
+
+        <!-- Highlight.js for JSON syntax highlighting -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/styles/github.min.css">
+
+        <!-- Handlebars.js -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.min.js"></script>
 
         <style>
             body {
                 font-family: "Helvetica Neue";
-                background: #f0f0f0;
                 margin: 0;
                 padding: 0;
             }
@@ -33,49 +36,108 @@
             .container {
                 width: 800px;
                 margin: 0 auto;
-                padding: 50px;
+                padding: 30px;
                 background: #fff;
             }
 
-            #location-picker {
-                width: 400px;
+            .wrapper {
+                margin: 45px 0;
+                background: #F8F8F8;
+                border: 2px solid #E9E9E9;
+                padding: 15px 0 40px 40px;
+                text-align: center;
             }
 
-            #feedback {
-                font-size: 16px;
-                margin-top: 50px;
+            .user-input {
+                margin: 0 auto;
+                display: inline-block;
+                text-align: left;
             }
+
+            #example {
+                width: 300px;
+            }
+
+            .codefont,
+            code {
+                font-size: 14px;
+                font-family: Monaco, Courier, monospace;
+            }
+
+            #data {
+                overflow-x: auto;
+            }
+
         </style>
+
+        <script id="response-template" type="text/x-handlebars-template">
+            <h4>Event type:</h4>
+            <code>{{eventType}}</code>
+            {{#if dataTypeHTML}}
+            <h4>Data type:</h4>
+            <p class="codefont">{{{dataTypeHTML}}}</p>
+            <h4>Data value:</h4>
+            <pre>
+                <code class="javascript codefont">{{data}}</code>
+            </pre>
+            {{/if}}
+        </script>
     </head>
     <body>
         <div class="container">
-            <h1>jQuery Placecomplete Plugin</h1>
-            <label>
-                Location:
-            </label>
-            <input type="text" id="example" value="Mountain View, CA"/>
-            <div id="feedback"></div>
+            <h1>Placecomplete</h1>
+            <p>A Select2/jQuery plugin for location autocomplete powered by the Google Maps API</p>
+            <div class="wrapper">
+                <div class="user-input">
+                    <h3>Choose a location:</h3>
+                    <input type="text" id="example" value="Mountain View, CA"/>
+                </div>
+            </div>
+            <div id="response"></div>
         </div>
         <script>
             $(function() {
                 var $el = $("#example"),
-                    $feedbackEl = $("#feedback");
+                    $responseEl = $("#response");
 
                 $el.placecomplete({
                     width: "element"
                 });
 
+                var tmpl = Handlebars.compile($("#response-template").html());
+
                 $el.on({
                     "placecomplete:selected": function(evt, placeResult) {
-                        $feedbackEl.text(JSON.stringify(placeResult));
+                        var data = JSON.stringify(placeResult, undefined, 2);
+
+                        var context = {
+                            eventType: evt.type,
+                            dataTypeHTML: "<a href='https://developers.google.com/maps/documentation/javascript/reference#PlaceResult'>Google Maps API PlaceResult</a> augmented with display_text property",
+                            data: data
+                        };
+                        $responseEl.html(tmpl(context));
+
+                        // Add syntax highlighting via highlight.js
+                        $responseEl.find("pre code").each(function(i, el) {
+                            hljs.highlightBlock(el);
+                        });
                     },
                     "placecomplete:cleared": function(evt) {
-                        $feedbackEl.text("Input cleared!");
+                        var context = {
+                            eventType: evt.type
+                        };
+                        $responseEl.html(tmpl(context));
                     },
                     "placecomplete:error": function(evt, errorMsg) {
-                        $feedbackEl.text("Error: " + errorMsg);
+                        var context = {
+                            eventType: evt.type,
+                            dataTypeHTML: "<a href='https://developers.google.com/maps/documentation/javascript/reference#PlacesServiceStatus'>google.maps.places.PlacesServiceStatus</a>",
+                            data: '"' + errorMsg + '"'
+                        };
+                        $responseEl.html(tmpl(context));
                     }
-                })
+                });
+                $el.select2("open", true);
             });
         </script>
 
