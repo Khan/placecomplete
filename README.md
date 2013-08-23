@@ -3,6 +3,8 @@ Placecomplete
 
 A jQuery and Select2 plugin for location autocomplete powered by the Google Maps API
 
+[Try the demo here.](https://rawgithub.com/stchangg/placecomplete/master/example.html)
+
 ## Summary
 
 At Khan Academy we needed a way to let users:
