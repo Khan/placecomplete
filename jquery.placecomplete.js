@@ -10,90 +10,132 @@
     }
 })(function($) {
 
+var pluginName = "placecomplete";
+var defaults = {
+    placeholderText: "City, State, Country",
+    // Request parameters for the .getPlacePredictions() call
+    // See https://developers.google.com/maps/
+    // documentation/javascript/reference#AutocompletionRequest
+    // for more details
+    requestParams: {
+        types: ["(cities)"]
+    }
+};
+
+window.initPlacecomplete = function() {
+    GooglePlacesAPI.completeInit();
+};
+
 /**
  * A wrapper to simplify communicating with and contain logic specific to the
  * Google Places API
  *
- * @param  {HTMLDivElement} el
- *
- *         Container in which to "render attributions", according to
- *         https://developers.google.com/maps/
- *         documentation/javascript/reference#PlacesService.
- *
- *         TODO(stephanie): I still don't really understand why the element
- *         is necessary, hence why I'm only ever instantiating PlacesService
- *         once, no matter how many elements are initialized with the plugin.
- *
  * @return {object} An object with public methods getPredictions() and
  *                  getDetails()
  */
-var GooglePlacesAPI = function(el) {
+var GooglePlacesAPI = {
 
-    // AutocompleteService is needed for getting the list of options
-    var acService = new google.maps.places.AutocompleteService();
+    deferred: new $.Deferred(),
+    initialized: false,
+    acService: null,
+    pService: null,
+    el: null,
 
-    // PlacesService is needed for getting details for the selected
-    // option
-    var pService = new google.maps.places.PlacesService(el);
+    /**
+     * Start loading Google Places API if it hasn't yet been loaded.
+     *
+     * @param  {HTMLDivElement} el
+     *
+     *     Container in which to "render attributions", according to
+     *     https://developers.google.com/maps/documentation/javascript/reference#PlacesService.
+     *     TODO(stephanie): I still don't really understand why the element is
+     *     necessary, hence why I'm only ever instantiating PlacesService
+     *     once, no matter how many elements are initialized with the plugin.
+     */
+    init: function(el) {
+        // Ensure init() is idempotent, just in case.
+        if (this.initialized) {
+            return;
+        }
 
-    var handlePredictions = function(def, abbreviatedPlaceResults, status) {
+        // Store element so we can use it to intialize PlacesService in
+        // completeInit()
+        this.el = el;
+
+        // Only fetch Google Maps API if it's not already loaded
+        if (window.google && google.maps && google.maps.places) {
+            // Skip to completeInit() directly
+            this.completeInit();
+        } else {
+            $.ajax({
+                url: "https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&callback=initPlacecomplete",
+                dataType: "script",
+                cache: true
+            });
+        }
+    },
+
+    completeInit: function() {
+        // AutocompleteService is needed for getting the list of options
+        this.acService = new google.maps.places.AutocompleteService();
+
+        // PlacesService is needed for getting details for the selected
+        // option
+        this.pService = new google.maps.places.PlacesService(this.el);
+
+        this.initialized = true;
+        this.deferred.resolve();
+    },
+
+    _handlePredictions: function(def, abbreviatedPlaceResults, status) {
         if (status !== google.maps.places.PlacesServiceStatus.OK) {
             def.reject(status);
             return;
         }
         def.resolve(abbreviatedPlaceResults);
-    };
+    },
 
-    var handleDetails = function(def, displayText, placeResult, status) {
+    _handleDetails: function(def, displayText, placeResult, status) {
         if (status !== google.maps.places.PlacesServiceStatus.OK) {
             def.reject(status);
             return;
         }
         placeResult["display_text"] = displayText;
         def.resolve(placeResult);
-    };
+    },
 
-    return {
-        // Get list of autocomplete results for the provided search term
-        getPredictions: function(searchTerm, requestParams) {
+    // Get list of autocomplete results for the provided search term
+    getPredictions: function(searchTerm, requestParams) {
+        return this.deferred.then($.proxy(function() {
             var deferred = new $.Deferred();
-            requestParams = $.extend({}, requestParams, {"input": searchTerm});
-            acService.getPlacePredictions(
-                requestParams, $.proxy(handlePredictions, this, deferred));
+            requestParams = $.extend({}, requestParams, {
+                "input": searchTerm
+            });
+            this.acService.getPlacePredictions(
+                requestParams,
+                $.proxy(this._handlePredictions, null, deferred));
             return deferred.promise();
-        },
+        }, this));
+    },
 
-        // Get details of the selected item
-        getDetails: function(abbreviatedPlaceResult) {
+    // Get details of the selected item
+    getDetails: function(abbreviatedPlaceResult) {
+        return this.deferred.then($.proxy(function() {
             var deferred = new $.Deferred();
             var displayText = abbreviatedPlaceResult.description;
-            pService.getDetails(
-                {reference: abbreviatedPlaceResult.reference},
-                $.proxy(handleDetails, this, deferred, displayText));
+            this.pService.getDetails({
+                reference: abbreviatedPlaceResult.reference
+            }, $.proxy(this._handleDetails, null, deferred, displayText));
             return deferred.promise();
-        }
-    };
+        }, this));
+    }
 };
 
-var pluginName = "placecomplete",
-    GPAPI,
-    defaults = {
-        placeholderText: "City, State, Country",
-        // Request parameters for the .getPlacePredictions() call
-        // See https://developers.google.com/maps/
-        // documentation/javascript/reference#AutocompletionRequest
-        // for more details
-        requestParams: {
-            types: ["(cities)"]
-        }
-    };
-
-function Plugin(element, options) {
+var Plugin = function(element, options) {
     this.element = element;
 
-    if (!GPAPI) {
-        GPAPI = new GooglePlacesAPI(this.element);
-    }
+    // Initialize
+    GooglePlacesAPI.init(element);
 
     this.options = $.extend({}, defaults, options);
 
@@ -101,7 +143,7 @@ function Plugin(element, options) {
     this._name = pluginName;
 
     this.init();
-}
+};
 
 Plugin.prototype.init = function() {
     var $el = $(this.element);
@@ -110,20 +152,21 @@ Plugin.prototype.init = function() {
 
     var select2options = $.extend({}, {
         query: function(query) {
-            $.when(GPAPI.getPredictions(query.term, requestParams))
-             .then(function(aprs) {
+            GooglePlacesAPI.getPredictions(query.term, requestParams)
+                .done(function(aprs) {
                     var results = $.map(aprs, function(apr) {
-                        // Select2 needs a "text" and "id" property set for
-                        // each autocomplete list item. "id" is already
-                        // defined on the apr object
+                        // Select2 needs a "text" and "id" property set
+                        // for each autocomplete list item. "id" is
+                        // already defined on the apr object
                         apr["text"] = apr["description"];
                         return apr;
                     });
                     query.callback({results: results});
-             }, function(errorMsg) {
+                })
+                .fail(function(errorMsg) {
                     $el.trigger(pluginName + ":error", errorMsg);
                     query.callback({results: []});
-             });
+                });
         },
         initSelection: function(element, callback) {
             // initSelection() was triggered by value being defined directly
@@ -152,11 +195,13 @@ Plugin.prototype.init = function() {
             if (!evt.added) {
                 return;
             }
-            $.when(GPAPI.getDetails(evt.added)).then(function(placeResult) {
-                $el.trigger(pluginName + ":selected", placeResult);
-            }, function(errorMsg) {
-                $el.trigger(pluginName + ":error", errorMsg);
-            });
+            GooglePlacesAPI.getDetails(evt.added)
+                .done(function(placeResult) {
+                    $el.trigger(pluginName + ":selected", placeResult);
+                })
+                .fail(function(errorMsg) {
+                    $el.trigger(pluginName + ":error", errorMsg);
+                });
         }
     });
 };

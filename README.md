@@ -25,13 +25,8 @@ Make sure to load the following libraries (and associated stylesheets and assets
 
 1. [jQuery](http://jquery.com/)
 2. [Select2](http://ivaynberg.github.io/select2/)
-3. [Google Maps Places API](https://developers.google.com/places/documentation/autocomplete)
 
-The following code is sufficient for including the Google Maps API:
-
-```html
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
-```
+The [Google Maps Places API](https://developers.google.com/places/documentation/autocomplete) will automatically be loaded by Placecomplete, but only if you haven't already loaded it.
 
 ## Usage
 
@@ -45,11 +40,10 @@ For example:
 ```html
 <html>
 <head>
-    <!-- jQuery, Select2, Google Maps Places API -->
+    <!-- jQuery, Select2 -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.css">
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&amp;sensor=false"></script>
 
     <!-- Placecomplete plugin -->
     <script src="jquery.placecomplete.js"></script>
