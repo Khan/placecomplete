@@ -193,3 +193,7 @@ To avoid problems caused by the Google Places Autocomplete widget, we decided to
 ## Authors
 
 [@stchangg](http://github.com/stchangg) - Developer at Khan Academy
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/stchangg/placecomplete/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
