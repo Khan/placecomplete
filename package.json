@@ -1,0 +1,13 @@
+{
+  "name": "placecomplete",
+  "version": "0.1.0",
+  "description": "A Select2/jQuery plugin for location autocomplete powered by the Google Maps API",
+  "author": "Khan Academy",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:stchangg/placecomplete.git"
+  },
+  "dependencies": {
+    "select2": "~3.4.5"
+  }
+}
