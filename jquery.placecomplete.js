@@ -10,6 +10,10 @@
     }
 })(function($) {
 
+if (typeof require === "function") {
+    require("select2");
+}
+
 var pluginName = "placecomplete";
 var defaults = {
     placeholderText: "City, State, Country",
