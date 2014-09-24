@@ -2,7 +2,7 @@
   "name": "placecomplete",
   "version": "0.1.0",
   "description": "A Select2/jQuery plugin for location autocomplete powered by the Google Maps API",
-  "author": "Khan Academy",
+  "author": "Stephanie H. Chang",
   "main": "jquery.placecomplete.js",
   "repository": {
     "type": "git",
@@ -10,5 +10,17 @@
   },
   "dependencies": {
     "select2": "~3.4.5"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/stchangg/placecomplete/issues"
+  },
+  "homepage": "https://github.com/stchangg/placecomplete",
+  "keywords": [
+    "google",
+    "maps",
+    "places",
+    "select2",
+    "autocomplete"
+  ],
+  "license": "MIT"
 }
